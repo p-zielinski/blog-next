@@ -4,13 +4,21 @@ import { UserRoles } from "../enums/userRoles";
 const UserSchema = new mongoose.Schema({
   password: {
     type: String,
-    required: true,
+    required: [true, "Password required"],
     unique: false,
   },
   email: {
     type: String,
-    required: true,
+    trim: true,
+    lowercase: true,
     unique: true,
+    validate: {
+      validator: function (v: string) {
+        return /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(v);
+      },
+      message: "Please enter a valid email",
+    },
+    required: [true, "Email required"],
   },
   email_confirmed: {
     type: Boolean,
