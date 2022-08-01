@@ -2,6 +2,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 import { connect } from "../../utils/connection";
 import registerSchema from "./yupSchemas/register";
 import validateRequest from "../../utils/validate";
+import hashString from "../../utils/hashString";
 
 export default async function (req: NextApiRequest, res: NextApiResponse) {
   return new Promise(async (resolve) => {
@@ -20,10 +21,12 @@ export default async function (req: NextApiRequest, res: NextApiResponse) {
             .status(400)
             .json({ error: "This email is already in use." });
         }
-        const newUser = await User.create(body);
+        const newUser = await User.create({
+          ...body,
+          password: await hashString(body.password),
+        });
         console.log(newUser);
-        res.json({});
-        break;
+        return res.json({});
       default:
         return res.status(400).json({ error: "No Response for This Request" });
     }
