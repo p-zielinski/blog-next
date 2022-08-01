@@ -10,10 +10,6 @@ const { DATABASE_URL } = process.env;
 export const connect = async () => {
   const conn = await mongoose
     .connect(DATABASE_URL as string, { dbName: "pipi" })
-    .then((data) => {
-      console.log("Mongoose Connection Established");
-      return data;
-    })
     .catch((err) => console.log(err));
 
   //Models
