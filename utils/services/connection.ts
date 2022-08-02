@@ -1,7 +1,7 @@
 //IMPORT MONGOOSE
 import mongoose from "mongoose";
-import UserSchema from "./models/userSchema";
-import { UserRoles } from "./enums/userRoles";
+import UserSchema from "../models/userSchema";
+import { UserRoles } from "../enums/userRoles";
 
 // CONNECTING TO MONGOOSE (Get Database Url from .env.local)
 const { DATABASE_URL } = process.env;
