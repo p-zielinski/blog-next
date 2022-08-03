@@ -1,10 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { connect } from "../../utils/services/connection";
-import registerSchema from "../../utils/yupSchemas/register";
-import validateRequest from "../../utils/services/validateRequest";
-import hashString from "../../utils/services/hashString";
-import { createJWT } from "../../utils/services/JWT";
-import getBearerToken from "../../utils/services/getBearerToken";
 import validateJWTFromBearerToken from "../../utils/services/validateJWTFromBearerToken";
 
 export default async function (req: NextApiRequest, res: NextApiResponse) {
