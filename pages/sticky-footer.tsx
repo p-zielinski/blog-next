@@ -12,27 +12,10 @@ import Grid from "@mui/material/Grid";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
+import { UserDbType } from "../types/userDb";
 
-export const getServerSideProps = async (context: any) => {
-  const { access_token } = context.req.cookies;
-
-  const responseUser = await fetch(process.env.API_URL + "me", {
-    method: "GET",
-    headers: {
-      "Content-type": "application/json",
-      Authorization: `Bearer ${access_token}`,
-    },
-  });
-  let user;
-  try {
-    user = await responseUser.json();
-  } catch (e) {}
-
-  console.log(user);
-
-  return {
-    props: {},
-  };
+type SignInSideProps = {
+  user?: UserDbType;
 };
 
 function Copyright(props: any) {
@@ -55,7 +38,8 @@ function Copyright(props: any) {
 
 const theme = createTheme();
 
-export default function SignInSide() {
+export default function SignInSide({ user }: SignInSideProps) {
+  console.log(user);
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
@@ -159,3 +143,23 @@ export default function SignInSide() {
     </ThemeProvider>
   );
 }
+
+export const getServerSideProps = async (context: any) => {
+  const { access_token } = context.req.cookies;
+
+  const responseUser = await fetch(process.env.API_URL + "me", {
+    method: "GET",
+    headers: {
+      "Content-type": "application/json",
+      Authorization: `Bearer ${access_token}`,
+    },
+  });
+  let user;
+  try {
+    user = await responseUser.json();
+  } catch (e) {}
+
+  return {
+    props: { user },
+  };
+};
