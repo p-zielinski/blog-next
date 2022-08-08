@@ -12,34 +12,24 @@ import Grid from "@mui/material/Grid";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-import { UserDbType } from "../types/userDb";
+import { UserDbType } from "../../types/userDb";
+import { Copyright } from "../../componets/Copyright";
+import { Formik } from "formik";
+import { InputText } from "../../componets/Form/Text";
+import InputAdornment from "@mui/material/InputAdornment";
+import Image from "next/image";
+import mail from "../../graphics/mail.svg";
+import locker from "../../graphics/locker.svg";
 
 type SignInSideProps = {
   user?: UserDbType;
 };
 
-function Copyright(props: any) {
-  return (
-    <Typography
-      variant="body2"
-      color="text.secondary"
-      align="center"
-      {...props}
-    >
-      {"Copyright © "}
-      <Link color="inherit" href="https://mui.com/">
-        Your Website
-      </Link>{" "}
-      {new Date().getFullYear()}
-      {"."}
-    </Typography>
-  );
-}
-
 const theme = createTheme();
 
-export default function SignInSide({ user }: SignInSideProps) {
-  console.log(user);
+export default function Auth({ user }: SignInSideProps) {
+  const status =
+
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
@@ -82,47 +72,68 @@ export default function SignInSide({ user }: SignInSideProps) {
             <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
               <LockOutlinedIcon />
             </Avatar>
-            <Typography component="h1" variant="h5">
+            <Typography component="h1" variant="h5" sx={{ mb: 1 }}>
               Sign in
             </Typography>
-            <Box
-              component="form"
-              noValidate
-              onSubmit={handleSubmit}
-              sx={{ mt: 1 }}
-            >
-              <TextField
-                margin="normal"
-                required
-                fullWidth
-                id="email"
-                label="Email Address"
-                name="email"
-                autoComplete="email"
-                autoFocus
-              />
-              <TextField
-                margin="normal"
-                required
-                fullWidth
-                name="password"
-                label="Password"
-                type="password"
-                id="password"
-                autoComplete="current-password"
-              />
-              <FormControlLabel
-                control={<Checkbox value="remember" color="primary" />}
-                label="Remember me"
-              />
-              <Button
-                type="submit"
-                fullWidth
-                variant="contained"
-                sx={{ mt: 3, mb: 2 }}
+            <Box sx={{ mt: 1 }}>
+              <Formik
+                initialValues={{ email: "", password: "" }}
+                onSubmit={(values, { setSubmitting }) => {
+                  const valuesWithEmailToLowerCase = {
+                    ...values, // @ts-ignore
+                    email: values.email?.toLowerCase() || "",
+                  };
+                  console.log(valuesWithEmailToLowerCase);
+
+                  setSubmitting(false);
+                }}
               >
-                Sign In
-              </Button>
+                {({
+                  handleSubmit,
+                  isSubmitting,
+                  values,
+                  errors,
+                  isValid,
+                  setFieldValue,
+                  touched,
+                }) => (
+                  <form onSubmit={handleSubmit}>
+                    {isSubmitting ? "aaa" : "bbb"}
+                    <InputText
+                      startAdornment={
+                        <InputAdornment position="start" sx={{ mb: 2 }}>
+                          <Image src={mail} alt="mail" />
+                        </InputAdornment>
+                      }
+                      type="text"
+                      name="email"
+                      label="Email address"
+                    />
+                    <InputText
+                      startAdornment={
+                        <InputAdornment position="start" sx={{ mb: 2 }}>
+                          <Image src={locker} alt="locker" />
+                        </InputAdornment>
+                      }
+                      type="password"
+                      name="password"
+                      label="Password"
+                    />
+                    <FormControlLabel
+                      control={<Checkbox value="remember" color="primary" />}
+                      label="Remember me"
+                    />
+                    <Button
+                      type="submit"
+                      fullWidth
+                      variant="contained"
+                      sx={{ mt: 3, mb: 2 }}
+                    >
+                      Sign In
+                    </Button>
+                  </form>
+                )}
+              </Formik>
               <Grid container>
                 <Grid item xs>
                   <Link href="#" variant="body2">
@@ -135,6 +146,7 @@ export default function SignInSide({ user }: SignInSideProps) {
                   </Link>
                 </Grid>
               </Grid>
+
               <Copyright sx={{ mt: 5 }} />
             </Box>
           </Box>
@@ -160,6 +172,6 @@ export const getServerSideProps = async (context: any) => {
   } catch (e) {}
 
   return {
-    props: { user },
+    props: { user: user?._id ? user : null },
   };
 };
