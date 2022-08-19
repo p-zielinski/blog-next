@@ -1,9 +1,11 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { connect } from "../../utils/services/connection";
 import validateJWTFromBearerToken from "../../utils/services/validateJWTFromBearerToken";
+import { add1 } from "../../db/test";
 
 export default async function (req: NextApiRequest, res: NextApiResponse) {
   return new Promise(async () => {
+    console.log(add1());
     switch (req.method) {
       case "GET":
         const session = validateJWTFromBearerToken(req);
