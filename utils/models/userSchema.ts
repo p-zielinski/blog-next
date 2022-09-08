@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import { UserRoles } from "../enums/userRoles";
+import emailRegexp from "../emailRegex";
 
 const UserSchema = new mongoose.Schema({
   password: {
@@ -14,7 +15,7 @@ const UserSchema = new mongoose.Schema({
     unique: true,
     validate: {
       validator: function (v: string) {
-        return /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(v);
+        return emailRegexp;
       },
       message: "Please enter a valid email",
     },

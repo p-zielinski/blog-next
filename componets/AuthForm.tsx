@@ -11,7 +11,7 @@ import { AuthPageState } from "../utils/enums/authPageState";
 import recoverSchema from "../utils/yupSchemas/recover";
 import jwt_decode from "jwt-decode";
 import Cookies from "js-cookie";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Alert } from "@mui/material";
 import loginRegisterSchema from "../utils/yupSchemas/loginRegister";
 
@@ -65,6 +65,7 @@ export const AuthForm = ({
     if (responseJSON.error) {
       setError(new Error(responseJSON.error));
     }
+    console.log(responseJSON);
     return false;
   };
 
@@ -83,6 +84,7 @@ export const AuthForm = ({
         if (authPageState === AuthPageState.REGISTER) {
           await onLoginOrRegister(emailAndPassword, "register");
         }
+        console.log();
 
         setSubmitting(false);
       }}
@@ -100,90 +102,96 @@ export const AuthForm = ({
         isValid,
         setFieldValue,
         touched,
-      }) => (
-        <>
-          <form
-            onSubmit={handleSubmit}
-            style={{ width: "100%", maxWidth: "600px" }}
-          >
-            {error && (
-              <Alert sx={{ mb: 2 }} severity="error">
-                {error.toString()}
-              </Alert>
-            )}
-            <InputText
-              startAdornment={
-                <InputAdornment position="start" sx={{ mb: 2 }}>
-                  <Image src={mail} alt="mail" />
-                </InputAdornment>
-              }
-              type="text"
-              name="email"
-              label="Email address"
-            />
-            {[AuthPageState.LOGIN, AuthPageState.REGISTER].includes(
-              authPageState
-            ) && (
+        setErrors,
+      }) => {
+        useEffect(() => {
+          setErrors({});
+        }, [authPageState]);
+        return (
+          <>
+            <form
+              onSubmit={handleSubmit}
+              style={{ width: "100%", maxWidth: "600px" }}
+            >
+              {error && (
+                <Alert sx={{ mb: 2 }} severity="error">
+                  {error.toString()}
+                </Alert>
+              )}
               <InputText
                 startAdornment={
                   <InputAdornment position="start" sx={{ mb: 2 }}>
-                    <Image src={locker} alt="locker" />
+                    <Image src={mail} alt="mail" />
                   </InputAdornment>
                 }
-                type="password"
-                name="password"
-                label="Password"
+                type="text"
+                name="email"
+                label="Email address"
               />
-            )}
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              sx={{ mt: 2, mb: 2 }}
-            >
-              {authPageState === AuthPageState.LOGIN
-                ? `Sign in`
-                : authPageState === AuthPageState.REGISTER
-                ? `Sign up`
-                : `Recover account`}
-            </Button>
-            <div
-              style={{
-                width: "100%",
-                justifyContent: "space-between",
-                display: "flex",
-              }}
-            >
-              {authPageState !== AuthPageState.REGISTER && (
-                <span
-                  onClick={() => setAuthPageState(AuthPageState.REGISTER)}
-                  style={blueUnderlinedTextStyle}
-                >
-                  Don't have an account? Sign Up
-                </span>
-              )}
-              {authPageState !== AuthPageState.LOGIN && (
-                <span
-                  onClick={() => setAuthPageState(AuthPageState.LOGIN)}
-                  style={blueUnderlinedTextStyle}
-                >
-                  Already have an account? Sign In
-                </span>
-              )}
-              {authPageState !== AuthPageState.FORGOT_PASSWORD && (
-                <span
-                  onClick={() =>
-                    setAuthPageState(AuthPageState.FORGOT_PASSWORD)
+              {[AuthPageState.LOGIN, AuthPageState.REGISTER].includes(
+                authPageState
+              ) && (
+                <InputText
+                  startAdornment={
+                    <InputAdornment position="start" sx={{ mb: 2 }}>
+                      <Image src={locker} alt="locker" />
+                    </InputAdornment>
                   }
-                  style={blueUnderlinedTextStyle}
-                >
-                  Forgot password?
-                </span>
+                  type="password"
+                  name="password"
+                  label="Password"
+                />
               )}
-            </div>
-          </form>
-        </>
-      )}
+              <Button
+                type="submit"
+                fullWidth
+                variant="contained"
+                sx={{ mt: 2, mb: 2 }}
+              >
+                {authPageState === AuthPageState.LOGIN
+                  ? `Sign in`
+                  : authPageState === AuthPageState.REGISTER
+                  ? `Sign up`
+                  : `Recover account`}
+              </Button>
+              <div
+                style={{
+                  width: "100%",
+                  justifyContent: "space-between",
+                  display: "flex",
+                }}
+              >
+                {authPageState !== AuthPageState.REGISTER && (
+                  <span
+                    onClick={() => setAuthPageState(AuthPageState.REGISTER)}
+                    style={blueUnderlinedTextStyle}
+                  >
+                    Don't have an account? Sign Up
+                  </span>
+                )}
+                {authPageState !== AuthPageState.LOGIN && (
+                  <span
+                    onClick={() => setAuthPageState(AuthPageState.LOGIN)}
+                    style={blueUnderlinedTextStyle}
+                  >
+                    Already have an account? Sign In
+                  </span>
+                )}
+                {authPageState !== AuthPageState.FORGOT_PASSWORD && (
+                  <span
+                    onClick={() =>
+                      setAuthPageState(AuthPageState.FORGOT_PASSWORD)
+                    }
+                    style={blueUnderlinedTextStyle}
+                  >
+                    Forgot password?
+                  </span>
+                )}
+              </div>
+            </form>
+          </>
+        );
+      }}
     </Formik>
   );
 };

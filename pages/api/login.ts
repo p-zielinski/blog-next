@@ -2,15 +2,15 @@ import { NextApiRequest, NextApiResponse } from "next";
 import { connect } from "../../utils/services/connection";
 import validateRequest from "../../utils/services/validateRequest";
 import { createJWT } from "../../utils/services/JWT";
-import loginSchema from "../../utils/yupSchemas/loginRegister";
 import { checkPassword } from "../../utils/services/password";
+import loginRegisterSchema from "../../utils/yupSchemas/loginRegister";
 
 export default async function (req: NextApiRequest, res: NextApiResponse) {
   return new Promise(async () => {
     switch (req.method) {
       case "POST":
         const { body, error, valid } = await validateRequest(
-          loginSchema,
+          loginRegisterSchema,
           req.body
         );
         if (error || !valid) {

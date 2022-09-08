@@ -1,14 +1,19 @@
 import * as yup from "yup";
+import recoverSchema from "./recover";
+import YupPassword from "yup-password";
+YupPassword(yup); // extend yup
 
-const loginRegisterSchema = yup.object({
-  password: yup.string().min(5).required(),
-  email: yup
-    .string()
-    .matches(
-      /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
-      "Please enter a valid email"
-    )
-    .required(),
-});
-
+const loginRegisterSchema = recoverSchema.concat(
+  yup.object().shape({
+    password: yup
+      .string()
+      .password()
+      .minLowercase(1)
+      .minUppercase(1)
+      .minNumbers(1)
+      .minSymbols(1)
+      .min(5)
+      .required(),
+  })
+);
 export default loginRegisterSchema;
