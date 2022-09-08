@@ -1,6 +1,7 @@
 import * as yup from "yup";
 
-const recoverSchema = yup.object({
+const loginRegisterSchema = yup.object({
+  password: yup.string().min(5).required(),
   email: yup
     .string()
     .matches(
@@ -10,4 +11,4 @@ const recoverSchema = yup.object({
     .required(),
 });
 
-export default recoverSchema;
+export default loginRegisterSchema;

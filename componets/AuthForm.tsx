@@ -7,9 +7,13 @@ import Button from "@mui/material/Button";
 import { Formik } from "formik";
 import * as React from "react";
 import { AuthPageState } from "../utils/enums/authPageState";
-import loginSchema from "../utils/yupSchemas/login";
-import registerSchema from "../utils/yupSchemas/register";
+
 import recoverSchema from "../utils/yupSchemas/recover";
+import jwt_decode from "jwt-decode";
+import Cookies from "js-cookie";
+import { useState } from "react";
+import { Alert } from "@mui/material";
+import loginRegisterSchema from "../utils/yupSchemas/loginRegister";
 
 type AuthFormProps = {
   authPageState: AuthPageState;
@@ -27,58 +31,64 @@ export const AuthForm = ({
   authPageState,
   setAuthPageState,
 }: AuthFormProps) => {
-  const onLogin = async (emailAndPassword: {
-    email: string;
-    password: string;
-  }) => {
-    const response = await fetch(process.env.NEXT_PUBLIC_API_URL + `login`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(emailAndPassword),
-    });
-    console.log(response);
-    return;
-  };
+  const [error, setError] = useState<Error | undefined>(undefined);
 
-  const onRegister = async (emailAndPassword: {
-    email: string;
-    password: string;
-  }) => {
-    const response = await fetch(process.env.NEXT_PUBLIC_API_URL + `login`, {
+  const onLoginOrRegister = async (
+    emailAndPassword: {
+      email: string;
+      password: string;
+    },
+    endpoint: "login" | "register"
+  ): Promise<boolean> => {
+    const response = await fetch(process.env.NEXT_PUBLIC_API_URL + endpoint, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(emailAndPassword),
     });
-    console.log(response);
-    return;
+    let responseJSON;
+    try {
+      responseJSON = await response.json();
+    } catch (e) {
+      setError(new Error("Communication error with the server"));
+      return false;
+    }
+    if (responseJSON.token) {
+      const jwtDecoded: { exp: number } = jwt_decode(responseJSON.token);
+      await Cookies.set("access_token", responseJSON.token, {
+        expires: new Date(jwtDecoded.exp * 1000),
+        path: "/",
+      });
+      return true;
+    }
+    if (responseJSON.error) {
+      setError(new Error(responseJSON.error));
+    }
+    return false;
   };
 
   return (
     <Formik
       initialValues={{ email: "", password: "" }}
       onSubmit={async (values, { setSubmitting }) => {
+        setError(undefined);
         const emailAndPassword = {
           ...values,
           email: values.email?.toLowerCase() || "",
         };
         if (authPageState === AuthPageState.LOGIN) {
-          await onLogin(emailAndPassword);
+          await onLoginOrRegister(emailAndPassword, "login");
         }
         if (authPageState === AuthPageState.REGISTER) {
-          await onRegister(emailAndPassword);
+          await onLoginOrRegister(emailAndPassword, "register");
         }
 
         setSubmitting(false);
       }}
       validationSchema={
-        authPageState === AuthPageState.LOGIN
-          ? loginSchema
-          : authPageState === AuthPageState.REGISTER
-          ? registerSchema
+        [AuthPageState.LOGIN, AuthPageState.REGISTER].includes(authPageState)
+          ? loginRegisterSchema
           : recoverSchema
       }
     >
@@ -96,6 +106,11 @@ export const AuthForm = ({
             onSubmit={handleSubmit}
             style={{ width: "100%", maxWidth: "600px" }}
           >
+            {error && (
+              <Alert sx={{ mb: 2 }} severity="error">
+                {error.toString()}
+              </Alert>
+            )}
             <InputText
               startAdornment={
                 <InputAdornment position="start" sx={{ mb: 2 }}>

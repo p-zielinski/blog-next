@@ -2,7 +2,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 import { connect } from "../../utils/services/connection";
 import validateRequest from "../../utils/services/validateRequest";
 import { createJWT } from "../../utils/services/JWT";
-import loginSchema from "../../utils/yupSchemas/login";
+import loginSchema from "../../utils/yupSchemas/loginRegister";
 import { checkPassword } from "../../utils/services/password";
 
 export default async function (req: NextApiRequest, res: NextApiResponse) {
