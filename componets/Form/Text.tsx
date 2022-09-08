@@ -16,6 +16,7 @@ type InputTextProps = {
 export const InputText: React.FC<InputTextProps> = ({
   label,
   name,
+
   type = "text",
   startAdornment,
   endAdornment,
@@ -24,7 +25,7 @@ export const InputText: React.FC<InputTextProps> = ({
 }) => {
   return (
     <FastField autoComplete="nope" name={name}>
-      {({ field, meta }) => (
+      {({ field, meta }: { field: any; meta: any }) => (
         <>
           <TextField
             disabled={isDisabled}
