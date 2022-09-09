@@ -5,7 +5,6 @@ import validateRequest from "../../utils/services/validateRequest";
 import { createJWT } from "../../utils/services/JWT";
 import { createPassword } from "../../utils/services/password";
 import loginRegisterSchema from "../../utils/yupSchemas/loginRegister";
-import UserSchema from "../../utils/models/userSchema";
 
 export default async function (req: NextApiRequest, res: NextApiResponse) {
   return new Promise(async () => {

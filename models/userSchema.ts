@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
-import { UserRoles } from "../enums/userRoles";
-import emailRegexp from "../emailRegex";
+import { UserRoles } from "../utils/enums/userRoles";
+import emailRegexp from "../utils/emailRegex";
 
 const UserSchema = new mongoose.Schema({
   password: {

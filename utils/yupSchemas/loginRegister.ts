@@ -16,4 +16,5 @@ const loginRegisterSchema = recoverSchema.concat(
       .required(),
   })
 );
+
 export default loginRegisterSchema;

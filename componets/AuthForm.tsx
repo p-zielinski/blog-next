@@ -14,17 +14,11 @@ import Cookies from "js-cookie";
 import { useEffect, useState } from "react";
 import { Alert } from "@mui/material";
 import loginRegisterSchema from "../utils/yupSchemas/loginRegister";
+import { blueUnderlinedTextStyle } from "../styles/blueUnderlinedTextStyle";
 
 type AuthFormProps = {
   authPageState: AuthPageState;
   setAuthPageState: (FORGOT_PASSWORD: AuthPageState) => unknown;
-};
-
-const blueUnderlinedTextStyle = {
-  color: `rgb(29,106,198)`,
-  textDecoration: "underline",
-  fontSize: "0.875rem",
-  cursor: "pointer",
 };
 
 export const AuthForm = ({
@@ -65,7 +59,6 @@ export const AuthForm = ({
     if (responseJSON.error) {
       setError(new Error(responseJSON.error));
     }
-    console.log(responseJSON);
     return false;
   };
 

@@ -16,15 +16,23 @@ import { Copyright } from "../componets/Copyright";
 import { useState } from "react";
 import AuthForm from "../componets/AuthForm";
 import { AuthPageState } from "../utils/enums/authPageState";
+import { blueUnderlinedTextStyle } from "../styles/blueUnderlinedTextStyle";
+import deleteCookie from "../utils/helperFunctions/deleteCookie";
 
 type SignInSideProps = {
-  user?: UserDbType;
+  propsUser?: UserDbType;
 };
 
 const theme = createTheme();
 
-export default function Auth({ user }: SignInSideProps) {
+export default function Auth({ propsUser }: SignInSideProps) {
+  const [user, setUser] = useState<UserDbType | undefined>(propsUser);
   const [currentPageState, setCurrentPageState] = useState(AuthPageState.LOGIN);
+
+  const logout = () => {
+    deleteCookie("access_token", "/");
+    setUser(undefined);
+  };
 
   return (
     <ThemeProvider theme={theme}>
@@ -56,20 +64,42 @@ export default function Auth({ user }: SignInSideProps) {
               alignItems: "center",
             }}
           >
-            <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
-              <LockOutlinedIcon />
-            </Avatar>
-            <Typography component="h1" variant="h5" sx={{ mb: 2 }}>
-              {currentPageState === AuthPageState.LOGIN
-                ? `Sign in`
-                : currentPageState === AuthPageState.REGISTER
-                ? `Sign up`
-                : `Recover account`}
-            </Typography>
-            <AuthForm
-              authPageState={currentPageState}
-              setAuthPageState={setCurrentPageState}
-            />
+            {user ? (
+              <Box
+                sx={{ width: "100%", maxWidth: "600px", textAlign: "center" }}
+              >
+                <p>You are logged as {user.email ?? user._id}</p>
+                <Button
+                  type="submit"
+                  fullWidth
+                  variant="contained"
+                  sx={{ mt: 0, mb: 0 }}
+                >
+                  Continue
+                </Button>
+                <span style={blueUnderlinedTextStyle} onClick={() => logout()}>
+                  sign out
+                </span>
+              </Box>
+            ) : (
+              <>
+                <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
+                  <LockOutlinedIcon />
+                </Avatar>
+                <Typography component="h1" variant="h5" sx={{ mb: 2 }}>
+                  {currentPageState === AuthPageState.LOGIN
+                    ? `Sign in`
+                    : currentPageState === AuthPageState.REGISTER
+                    ? `Sign up`
+                    : `Recover account`}
+                </Typography>
+                <AuthForm
+                  authPageState={currentPageState}
+                  setAuthPageState={setCurrentPageState}
+                />
+              </>
+            )}
+
             <Box sx={{ mt: 0, width: "100%" }}>
               <Copyright sx={{ mt: 5 }} />
             </Box>
@@ -96,6 +126,6 @@ export const getServerSideProps = async (context: any) => {
   } catch (e) {}
 
   return {
-    props: { user: user?._id ? user : null },
+    props: { propsUser: user?._id ? user : null },
   };
 };
