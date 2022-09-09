@@ -34,6 +34,15 @@ export default function Auth({ propsUser }: SignInSideProps) {
     setUser(undefined);
   };
 
+  const userX = {
+    isFirstTimr: true,
+    indexNumber: "dfsadsa",
+    isActive: true,
+    password: "dsadsa",
+    name: "",
+    lastname: "",
+  };
+
   return (
     <ThemeProvider theme={theme}>
       <Grid container component="main" sx={{ height: "100vh" }}>
