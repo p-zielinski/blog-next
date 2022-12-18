@@ -106,10 +106,13 @@ export default function Auth({ propsUser }: SignInSideProps) {
           </Box>
         </Grid>
       </Grid>
+
     </ThemeProvider>
   );
 }
 
+
+//
 export const getServerSideProps = async (context: any) => {
   const { access_token } = context.req.cookies;
 
